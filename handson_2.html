@@ -43,66 +43,165 @@
                 </div>
                 <div class="content">
                     
-<h1 id="codeigniter-herunterladen-und-einrichten">CodeIgniter herunterladen und einrichten</h1>
+<h1 id="datenbank-installation-und-einrichtung">Datenbank Installation und Einrichtung</h1>
 
-<p><a href="https://github.com/EllisLab/CodeIgniter/tarball/develop">Aktuelle develop branch</a></p>
+<p>Installieren Sie sqlite und das dazugehörige PHP-Modul</p>
 
-<p>alternativ:</p>
-
-<pre><code>$ git clone https://github.com/EllisLab/CodeIgniter
+<pre><code>$ sudo apt-get install sqlite php5-sqlite
 </code></pre>
 
-<p>Code in <code>/var/www/HandsOn</code> ablegen.</p>
+<p>Legen Sie eine neue Datenbank in <code>application/db/</code> an</p>
 
-<h1 id="nginx-einrichten">NGINX einrichten</h1>
-
-<pre><code>$ sudo gedit /etc/nginx/sites-available/default
+<pre><code>$ cd application/db/
+$ sqlite3 app.db "create table posts (id integer primary key autoincrement, title text, slug text unique, text text);"
+$ sqlite3 app.db "insert into posts (title, slug, text) values ('Heute PHP Lehrgang', 'php-lehrgang', 'Heute findet eine PHP Lehrgang statt');"
+$ chmod a+w app.db
+$ chmod a+w .
 </code></pre>
 
-<p>Folgende Zeilen einfügen:</p>
+<p>Konfigurieren sie CodeIgniter um auf die Datenbank zugreifen zu können. In <code>application/config/autoload.php</code> fügen Sie den Eintrag <code>'database'</code> zu dem array <code>$autoload['libraries']</code> hinzu:</p>
 
-<pre><code>server {
-	listen [::]:80 default_server ipv6only=off;
+<pre><code>$autoload['libraries'] = array('database');
+</code></pre>
 
-	root /var/www/;
+<p>In der Datei <code>application/config/database.php</code> passen sie die Einträge <code>'dsn'</code> und <code>'dbdriver'</code> an:</p>
 
-	index index.html index.htm index.php;
+<pre><code>    'dsn'   =&gt; 'sqlite:'.APPPATH.'/db/app.db',
+    'dbdriver' =&gt; 'pdo',
+</code></pre>
 
-	server_name localhost;
+<h1 id="modell-anlegen">Modell anlegen</h1>
 
-	location /HandsOn {
-		rewrite ^/HandsOn/(.*)$ /HandsOn/index.php last;
-	}
+<p>Damit die Anwendung auf die Datenbank zugreifen kann muss eine Modell-Klasse angelegt werden. Erstellen Sie in <code>application/moels/</code> eine Datei mit dem Namen <code>News_model.php</code> und folgendem Inhalt:</p>
 
-	# pass the PHP scripts to FastCGI server	
-	location ~ \.php$ {
-		fastcgi_split_path_info ^(.+\.php)(/.+)$;
-		# With php5-fpm:
-		fastcgi_pass unix:/var/run/php5-fpm.sock;
-		#fastcgi_pass unix:/var/run/hhvm/hhvm.sock;
-		fastcgi_index index.php;
-		include fastcgi_params;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		fastcgi_param PATH_INFO $fastcgi_script_name;
-	}
+<pre><code>&lt;?php
+class News_model extends CI_Model {
+
+    public function __construct()
+    {
+        $this-&gt;load-&gt;database();
+    }
 }
 </code></pre>
 
-<p>Server neustarten</p>
+<p>Das Modell benötigt außerdem eine Funktion, mit der die Einträge aus der Datenbank abgefragt werden können. Fügen Sie folgenden Funktion zu der eben definierten Klasse hinzu:</p>
 
-<pre><code>$ sudo service nginx restart
+<pre><code>public function get_news($slug = FALSE)
+{
+    if ($slug === FALSE)
+    {
+        $query = $this-&gt;db-&gt;get('posts');
+        return $query-&gt;result_array();
+    }
+
+    $query = $this-&gt;db-&gt;get_where('posts', array('slug' =&gt; $slug));
+    return $query-&gt;row_array();
+}
 </code></pre>
 
-<h1 id="seite-ausprobieren">Seite ausprobieren</h1>
+<p>Diese Methode überprüft ob ein <code>$slug</code> angegeben ist und entscheidet, ob Sie alle Einträge oder nur einen bestimmten abfragt.</p>
 
-<p><a href="http://localhost/HandsOn/">http://localhost/HandsOn/</a> (Es sollte ein 404 Fehler kommen)</p>
+<h1 id="eintrge-anzeigen">Einträge anzeigen</h1>
 
-<h1 id="codeigniter-einrichten">CodeIgniter einrichten</h1>
+<p>Um die Einträge aus der Datenbank anzuzeigen legen wir einen neuen Controller <code>application/controllers/News.php</code> mit folgendem Inhalt an:</p>
 
-<pre><code>…
-$config['uri_protocol'] = 'REQUEST_URI';
-…
+<pre><code>&lt;?php
+class News extends CI_Controller {
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this-&gt;load-&gt;model('news_model');
+    }
+
+    public function index()
+    {
+        $data['news'] = $this-&gt;news_model-&gt;get_news();
+    }
+
+    public function view($slug)
+    {
+        $data['news'] = $this-&gt;news_model-&gt;get_news($slug);
+    }
+}
 </code></pre>
+
+<p>Der Controller initialisiert das zuvor angelegte Modell und stellt die Einträge aus der Datenbank in zwei Funktionen zu Verfügung.
+Allerdings könne sie dadurch noch nicht angezeigt werden.
+Erweitern Sie die Methode <code>index()</code> folgedermaßen:</p>
+
+<pre><code>public function index()
+{
+    $data['news'] = $this-&gt;news_model-&gt;get_news();
+    $data['title'] = 'News archive';
+
+    $this-&gt;load-&gt;view('templates/header', $data);
+    $this-&gt;load-&gt;view('news/index', $data);
+    $this-&gt;load-&gt;view('templates/footer');
+}
+</code></pre>
+
+<p>Wie in der letzten Lektion müssen wir auch hier wieder ein Tempalte definieren <code>application/views/news/index.php</code></p>
+
+<pre><code>&lt;?php foreach ($news as $news_item): ?&gt;
+
+    &lt;h2&gt;&lt;?php echo $news_item['title'] ?&gt;&lt;/h2&gt;
+    &lt;div class="main"&gt;
+        &lt;?php echo $news_item['text'] ?&gt;
+    &lt;/div&gt;
+    &lt;p&gt;&lt;a href="&lt;?php echo $news_item['slug'] ?&gt;"&gt;View article&lt;/a&gt;&lt;/p&gt;
+
+&lt;?php endforeach ?&gt;
+</code></pre>
+
+<p>Wir haben jetzt eine Übersichtsseite für die Einträge erstellt. Es fehlt noch die Detail-Ansicht. Erweitern sie die Methode <code>view($slug)</code> des News-Controllers folgendermaßen:</p>
+
+<pre><code>public function view($slug)
+{
+    $data['news_item'] = $this-&gt;news_model-&gt;get_news($slug);
+
+    if (empty($data['news_item']))
+    {
+        show_404();
+    }
+
+    $data['title'] = $data['news_item']['title'];
+
+    $this-&gt;load-&gt;view('templates/header', $data);
+    $this-&gt;load-&gt;view('news/view', $data);
+    $this-&gt;load-&gt;view('templates/footer');
+}
+</code></pre>
+
+<p>Auch hier wird wieder ein Template benötigt <code>application/views/news/view.php</code></p>
+
+<pre><code>&lt;?php
+echo '&lt;h2&gt;'.$news_item['title'].'&lt;/h2&gt;';
+echo $news_item['text'];
+</code></pre>
+
+<h1 id="routing">Routing</h1>
+
+<p>Da wir in der letzten Lektion eine allgemeine Route festgelegt hatten, die alle Anfragen an den Pages-Controller weiterleitet, müssen wir jetzt zwei weitere Regeln ergänzen. Passen Sie die Datei <code>application/config/routes.php</code> folgendermaßen an:</p>
+
+<pre><code>$route['news/(:any)'] = 'news/view/$1';
+$route['news'] = 'news';
+$route['(:any)'] = 'pages/view/$1';
+$route['default_controller'] = 'pages/view';
+</code></pre>
+
+<p>Überprüfen Sie, ob alles funktioniert: <a href="http://localhost/HandsOn/news/">http://localhost/HandsOn/news/</a></p>
+
+<h1 id="weiter">Weiter</h1>
+
+<ul>
+  <li>Fügen Sie mit <code>$ sqlite3 app.db "insert into posts (title, slug, text) values ('', '', '');"</code> weitere Einträge zur Datenbank hinzu und sehen Sie, wie die Seite aktualisiert wird.</li>
+  <li>Erweitern Sie die Anwendung um ein Formular zur Eingabe von neuen Einträgen: <a href="https://ellislab.com/codeigniter/user-guide/tutorial/create_news_items.html">https://ellislab.com/codeigniter/user-guide/tutorial/create_news_items.html</a></li>
+</ul>
+
+<hr />
+
+<p>Quelle: <a href="https://ellislab.com/codeigniter/user-guide/tutorial/news_section.html">https://ellislab.com/codeigniter/user-guide/tutorial/news_section.html</a></p>
 
                 </div>
             </div>
