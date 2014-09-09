@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+    <title>PHP Lehrgang - TQ Group</title>
+    <link rel="stylesheet" href="css/pure.css">
+    <link rel="stylesheet" href="css/layouts/side-menu.css">
+    <link rel="stylesheet" href="css/elag.css">
+    <link rel="stylesheet" href="css/default.css">
+    <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,300,700,600' rel='stylesheet' type='text/css'>-->
+    <!--<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">-->
+</head>
+
+    <body>
+        <div id="layout">
+            <!-- Menu toggle -->
+            <a href="#menu" id="menuLink" class="menu-link">
+            <!-- Hamburger icon -->
+            <span></span>
+            </a>
+            <div id="menu">
+    <div class="pure-menu pure-menu-open">
+        <a class="pure-menu-heading" href="#">PHP</a>
+        <ul>
+            <li id="menu_item_home"><a href="index.html">Home</a></li>
+            <li id="menu_item_install"><a href="install.html">Setup und Tools</a></li>
+            <li id="menu_item_paradigmen"><a href="paradigmen.html">Paradigmen</a></li>
+            <li id="menu_item_features"><a href="features.html">Features</a></li>
+            <li id="menu_item_handson"><a href="handson.html">Hands On</a></li>
+            <li id="menu_item_links"><a href="links.html">Links</a></li>
+        </ul>
+    </div>
+</div>
+
+            <div id="main">
+                <div class="header">
+                    <h1>PHP Framework – Hands On</h1>
+                    <h2>CodeIgniter</h2>
+                </div>
+                <div class="content">
+                    
+<h1 id="codeigniter-herunterladen-und-einrichten">CodeIgniter herunterladen und einrichten</h1>
+
+<p><a href="https://github.com/EllisLab/CodeIgniter/tarball/develop">Aktuelle develop branch</a></p>
+
+<p>alternativ:</p>
+
+<pre><code>$ git clone https://github.com/EllisLab/CodeIgniter
+</code></pre>
+
+<p>Code in <code>/var/www/HandsOn</code> ablegen.</p>
+
+<h1 id="nginx-einrichten">NGINX einrichten</h1>
+
+<pre><code>$ sudo gedit /etc/nginx/sites-available/default
+</code></pre>
+
+<p>Folgende Zeilen einfügen:</p>
+
+<pre><code>server {
+	listen [::]:80 default_server ipv6only=off;
+
+	root /var/www/;
+
+	index index.html index.htm index.php;
+
+	server_name localhost;
+
+	location /HandsOn {
+		rewrite ^/HandsOn/(.*)$ /HandsOn/index.php last;
+	}
+
+	# pass the PHP scripts to FastCGI server	
+	location ~ \.php$ {
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		# With php5-fpm:
+		fastcgi_pass unix:/var/run/php5-fpm.sock;
+		#fastcgi_pass unix:/var/run/hhvm/hhvm.sock;
+		fastcgi_index index.php;
+		include fastcgi_params;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_param PATH_INFO $fastcgi_script_name;
+	}
+}
+</code></pre>
+
+<p>Server neustarten</p>
+
+<pre><code>$ sudo service nginx restart
+</code></pre>
+
+<h1 id="seite-ausprobieren">Seite ausprobieren</h1>
+
+<p><a href="http://localhost/HandsOn/">http://localhost/HandsOn/</a> (Es sollte ein 404 Fehler kommen)</p>
+
+<h1 id="codeigniter-einrichten">CodeIgniter einrichten</h1>
+
+<pre><code>…
+$config['uri_protocol'] = 'REQUEST_URI';
+…
+</code></pre>
+
+                </div>
+            </div>
+        </div>
+        <script src="js/highlight.js"></script>
+        <script src="js/ui.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#menu_item_handson").addClass("menu-item-divided pure-menu-selected");
+            });
+        </script>
+    </body>
+</html>

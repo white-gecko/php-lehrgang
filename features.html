@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+    <title>PHP Lehrgang - TQ Group</title>
+    <link rel="stylesheet" href="css/pure.css">
+    <link rel="stylesheet" href="css/layouts/side-menu.css">
+    <link rel="stylesheet" href="css/elag.css">
+    <link rel="stylesheet" href="css/default.css">
+    <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,300,700,600' rel='stylesheet' type='text/css'>-->
+    <!--<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">-->
+</head>
+
+    <body>
+        <div id="layout">
+            <!-- Menu toggle -->
+            <a href="#menu" id="menuLink" class="menu-link">
+            <!-- Hamburger icon -->
+            <span></span>
+            </a>
+            <div id="menu">
+    <div class="pure-menu pure-menu-open">
+        <a class="pure-menu-heading" href="#">PHP</a>
+        <ul>
+            <li id="menu_item_home"><a href="index.html">Home</a></li>
+            <li id="menu_item_install"><a href="install.html">Setup und Tools</a></li>
+            <li id="menu_item_paradigmen"><a href="paradigmen.html">Paradigmen</a></li>
+            <li id="menu_item_features"><a href="features.html">Features</a></li>
+            <li id="menu_item_handson"><a href="handson.html">Hands On</a></li>
+            <li id="menu_item_links"><a href="links.html">Links</a></li>
+        </ul>
+    </div>
+</div>
+
+            <div id="main">
+                <div class="header">
+                    <h1>Feature Vorstellung</h1>
+                </div>
+                <div class="content">
+                    
+<h1 id="lambda-ausdrcke">Lambda-Ausdrücke</h1>
+
+<pre><code>&lt;?php
+$multiplikation = function ($a, $b) {
+    return $a * $b;
+};
+
+$addition = function ($a, $b) {
+    return $a + $b;
+};
+
+function berechne ($a, $b, $funktion) {
+    return $funktion($a, $b);
+}
+
+echo berechne (2, 3, $multiplikation) . PHP_EOL; // 6
+echo berechne (2, 3, $addition) . PHP_EOL; // 5
+</code></pre>
+
+<h1 id="closures">Closures</h1>
+
+<pre><code>&lt;?php
+function getIncrement($step) {
+    return function ($num) use ($step) {
+        return $num + $step;
+    };
+}
+
+$woche = getIncrement(7);
+$dekade = getIncrement(10);
+
+echo $woche(5) . PHP_EOL; // 12
+echo $dekade(5) . PHP_EOL; // 15
+</code></pre>
+
+<h1 id="reflections-api">Reflections API</h1>
+
+<pre><code>&lt;?php
+class Example {
+    private $_message = 'hello';
+    public function say() {
+        echo $this-&gt;_message;
+    }
+    public function change($message) {
+        $this-&gt;_message = $message;
+    }
+}
+
+$ex = new ReflectionClass('Example');
+foreach($ex-&gt;getMethods() as $method) {
+    echo $method-&gt;getName() . PHP_EOL;
+}
+</code></pre>
+
+<h1 id="type-checking">Type Checking</h1>
+
+<pre><code>&lt;?php
+is_bool(false);
+is_int(1); // is_integer()
+is_float(1.234);
+is_numeric(1.235);
+is_string('hallo');
+is_array(array());
+is_object(new StdClass());
+</code></pre>
+
+<h1 id="konstanten-und-superglobals">Konstanten und Superglobals</h1>
+
+<pre><code>&lt;?php
+// Globale Konstanten
+define('APP_CONST', 'Welt');
+echo 'Hallo ' . APP_CONST . PHP_EOL;
+
+// Konstanten in Klassen
+class Bsp {
+    const KONSTANTE = 'Klasse';
+}
+echo 'Hallo ' . Bsp::KONSTANTE . PHP_EOL;
+
+// Magische Konstanten (von PHP bereitgestellt)
+echo __FILE__ . ':' . __LINE__ . PHP_EOL;
+
+// Superglobals: $_SERVER, $_GET, $_POST
+echo $_SERVER['REQUEST_TIME'] . PHP_EOL;
+</code></pre>
+
+<h1 id="errorhandling-und-exceptions">Errorhandling und Exceptions</h1>
+
+<h2 id="fehler-unterdrcken">Fehler unterdrücken</h2>
+
+<pre><code>&lt;?php
+$a = 2; $b = 0;
+$c = @($a/$b); // $c ist bool(false)
+</code></pre>
+
+<h2 id="fehler-auslsen">Fehler auslösen</h2>
+
+<pre><code>&lt;?php
+function increase($a, $b) {
+    if ($b &lt;= 0) {
+        trigger_error('$b muss groesser 0 sein', E_USER_ERROR);
+    }
+    return $a + $b;
+}
+echo increase(1, 5) . PHP_EOL;
+echo increase(1, -5) . PHP_EOL;
+</code></pre>
+
+<h2 id="fehler-abfangen">Fehler abfangen</h2>
+
+<pre><code>&lt;?php
+function increase($a, $b) {
+    if ($b &lt;= 0) {
+        trigger_error('$b muss groesser 0 sein', E_USER_ERROR);
+    }
+    return $a + $b;
+}
+
+$handler = function ($error, $errorString, $filename, $line, $symbols) {
+    echo 'Ein Fehler: "' . $errorString . '" :-(' . PHP_EOL;
+};
+
+set_error_handler($handler);
+
+echo increase(1, -5) . PHP_EOL;
+</code></pre>
+
+<h2 id="fehler-in-datei-schreiben">Fehler in Datei schreiben</h2>
+
+<pre><code>&lt;?php
+function getHandler ($file) {
+    return function ($error, $errorString) use ($file) {
+        if(filesize($file) &gt; 1024) {
+            rename($file, $file . (string) time());
+            clearstatcache();
+        }
+        error_log($errorString, 3, $file);
+    };
+}
+set_error_handler(getHandler('/tmp/inc.log'));
+for($i = 0; $i &lt; 5000; $i++) {
+    trigger_error(time() . ": Just an error, ma'am.\n");
+}
+restore_error_handler();
+</code></pre>
+
+<h2 id="exception-handling">Exception handling</h2>
+
+<pre><code>&lt;?php
+class TestException extends Exception { }
+
+function einFehler () {
+    throw new TestException('Das sollte man nicht machen!');
+}
+
+try {
+    einFehler();
+} catch (TestException $e) {
+    echo 'Es ist ein Fehler aufgetreten: "' . $e-&gt;getMessage() . '"' . PHP_EOL;
+} finally {
+    // Datenbankverbindung oder Dateihandle schliessen
+}
+// weiter gehts
+</code></pre>
+
+<h1 id="dateioperationen">Dateioperationen</h1>
+
+<pre><code>&lt;?php
+$handle = fopen('/tmp/datei.txt', 'r'); // dateiname, modus (r, w, a, x, c)
+$line = fgets($handle);
+fclose($handle);
+
+$handle = fopen('/tmp/datei.txt', 'w');
+fwrite($handle, $line . PHP_EOL . $line);
+fclose($handle);
+</code></pre>
+
+
+                </div>
+            </div>
+        </div>
+        <script src="js/highlight.js"></script>
+        <script src="js/ui.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#menu_item_features").addClass("menu-item-divided pure-menu-selected");
+            });
+        </script>
+    </body>
+</html>
