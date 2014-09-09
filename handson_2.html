@@ -38,43 +38,81 @@
 
             <div id="main">
                 <div class="header">
-                    <h1>Start</h1>
-                    <h2>Installation</h2>
+                    <h1>PHP Framework – Hands On</h1>
+                    <h2>CodeIgniter – Datenbankabfrage</h2>
                 </div>
                 <div class="content">
                     
-<h1 id="lamp-stack">LAMP Stack</h1>
-<p>The LAMP stack makes use of the following components:</p>
+<h1 id="codeigniter-herunterladen-und-einrichten">CodeIgniter herunterladen und einrichten</h1>
 
-<ul>
-  <li><strong>L</strong>inux, the operating system</li>
-  <li><strong>A</strong>pache, the HTTP server</li>
-  <li><strong>M</strong>ySQL, a database, not needed in this use case</li>
-  <li><strong>P</strong>HP, the scripting language</li>
-</ul>
+<p><a href="https://github.com/EllisLab/CodeIgniter/tarball/develop">Aktuelle develop branch</a></p>
 
-<p>Instead of MySQL, we are using the Virtuoso Database.</p>
+<p>alternativ:</p>
 
-<h2 id="linux">Linux</h2>
-<p><i class="fa fa-check fa-fw"></i> Since this virtual machine is based on Linux, this requirement is fullfilled.</p>
+<pre><code>$ git clone https://github.com/EllisLab/CodeIgniter
+</code></pre>
 
-<h2 id="apache">Apache</h2>
-<p><i class="fa fa-exclamation fa-fw"></i> If you can see this page, the Apache HTTP server (or your equivalent) is already running sucessfully. Nevertheless, we still need to configure the Apache to make it run OntoWiki. </p>
+<p>Code in <code>/var/www/HandsOn</code> ablegen.</p>
 
-<h2 id="virtuoso-database">Virtuoso Database</h2>
-<p><i class="fa fa-exclamation fa-fw"></i> The Virtuoso can be installed directly from the Ubuntu repositories. To learn how go to the next section.</p>
+<h1 id="nginx-einrichten">NGINX einrichten</h1>
 
-<h2 id="php">PHP</h2>
-<p><i class="fa fa-check fa-fw"></i> The pre-installed Apache already comes with PHP.</p>
+<pre><code>$ sudo gedit /etc/nginx/sites-available/default
+</code></pre>
+
+<p>Folgende Zeilen einfügen:</p>
+
+<pre><code>server {
+	listen [::]:80 default_server ipv6only=off;
+
+	root /var/www/;
+
+	index index.html index.htm index.php;
+
+	server_name localhost;
+
+	location /HandsOn {
+		rewrite ^/HandsOn/(.*)$ /HandsOn/index.php last;
+	}
+
+	# pass the PHP scripts to FastCGI server	
+	location ~ \.php$ {
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		# With php5-fpm:
+		fastcgi_pass unix:/var/run/php5-fpm.sock;
+		#fastcgi_pass unix:/var/run/hhvm/hhvm.sock;
+		fastcgi_index index.php;
+		include fastcgi_params;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_param PATH_INFO $fastcgi_script_name;
+	}
+}
+</code></pre>
+
+<p>Server neustarten</p>
+
+<pre><code>$ sudo service nginx restart
+</code></pre>
+
+<h1 id="seite-ausprobieren">Seite ausprobieren</h1>
+
+<p><a href="http://localhost/HandsOn/">http://localhost/HandsOn/</a> (Es sollte ein 404 Fehler kommen)</p>
+
+<h1 id="codeigniter-einrichten">CodeIgniter einrichten</h1>
+
+<pre><code>…
+$config['uri_protocol'] = 'REQUEST_URI';
+…
+</code></pre>
 
                 </div>
             </div>
         </div>
-        <script src="js/jquery.js"></script>
+        <script src="js/highlight.js"></script>
         <script src="js/ui.js"></script>
+        <script src="js/jquery.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
-                $("#menu_item_start").addClass("menu-item-divided pure-menu-selected");
+                $("#menu_item_handson_2").addClass("menu-item-divided pure-menu-selected");
             });
         </script>
     </body>

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+    <title>PHP Lehrgang - TQ Group</title>
+    <link rel="stylesheet" href="css/pure.css">
+    <link rel="stylesheet" href="css/layouts/side-menu.css">
+    <link rel="stylesheet" href="css/elag.css">
+    <link rel="stylesheet" href="css/default.css">
+    <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,300,700,600' rel='stylesheet' type='text/css'>-->
+    <!--<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">-->
+</head>
+
+    <body>
+        <div id="layout">
+            <!-- Menu toggle -->
+            <a href="#menu" id="menuLink" class="menu-link">
+            <!-- Hamburger icon -->
+            <span></span>
+            </a>
+            <div id="menu">
+    <div class="pure-menu pure-menu-open">
+        <a class="pure-menu-heading" href="#">PHP</a>
+        <ul>
+            <li id="menu_item_home"><a href="index.html">Home</a></li>
+            <li id="menu_item_install"><a href="install.html">Setup und Tools</a></li>
+            <li id="menu_item_paradigmen"><a href="paradigmen.html">Paradigmen</a></li>
+            <li id="menu_item_features"><a href="features.html">Features</a></li>
+            <li id="menu_item_handson"><a href="handson.html">Hands On 0</a></li>
+            <li id="menu_item_handson_1"><a href="handson_1.html">Hands On I</a></li>
+            <li id="menu_item_handson_2"><a href="handson_2.html">Hands On II</a></li>
+            <li id="menu_item_links"><a href="links.html">Links</a></li>
+        </ul>
+    </div>
+</div>
+
+            <div id="main">
+                <div class="header">
+                    <h1>PHP Framework – Hands On</h1>
+                    <h2>CodeIgniter – Statische Seite</h2>
+                </div>
+                <div class="content">
+                    
+<h1 id="einen-neuen-controller-anlegen">Einen neuen Controller anlegen</h1>
+
+<p>Legen Sie unter <code>application/controllers/</code> eine neue Datei mit dem Namen <code>Pages.php</code> und folgendem Inhalt an:</p>
+
+<pre><code>&lt;?php
+
+class Pages extends CI_Controller {
+    public function view($page = 'home')
+    {
+
+    }
+}
+</code></pre>
+
+<p>Sie haben soeben einen neuen Controller <code>Pages</code> durch ableiten der Klasse <code>CI_Controller</code> angelegt.
+Der Controller hat eine Action <code>view</code>, welche einen Parameter <code>$page</code> akzeptiert.</p>
+
+<h1 id="templates-anlegen">Templates anlegen</h1>
+
+<p>Legen Sie ein Template für den oberen Teil der Seite unter <code>application/views/templates/header.php</code> mit folgendem Inhalt an:</p>
+
+<pre><code>&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;&lt;?= $title ?&gt; - PHP Lehrgang&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;PHP Lehrgang – Hands On I&lt;/h1&gt;
+</code></pre>
+
+<p>Dabei wird auf die Variable <code>$title</code> zugegriffen, die wir später in dem Controller definieren.</p>
+
+<p>… und ein weiteres Template für den unteren Teil der Seite unter <code>application/views/templates/footer.php</code> mit folgendem Inhalt:</p>
+
+<pre><code>    &lt;hr /&gt;
+    &lt;strong&gt;&amp;copy; 2014&lt;/strong&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<h1 id="die-action-implementieren">Die Action implementieren</h1>
+
+<p>Nun müssen wir der Action im Controller eine Aufgabe geben:</p>
+
+<pre><code>public function view($page = 'home')
+{
+    if ( ! file_exists(APPPATH.'/views/pages/'.$page.'.php'))
+    {
+        // Whoops, we don't have a page for that!
+        show_404();
+    }
+
+    $data['title'] = ucfirst($page); // Capitalize the first letter
+
+    $this-&gt;load-&gt;view('templates/header', $data);
+    $this-&gt;load-&gt;view('pages/'.$page, $data);
+    $this-&gt;load-&gt;view('templates/footer', $data);
+}
+</code></pre>
+
+<p>Wie man sieht wird die Existenz der mit dem Parameter <code>$page</code> angegebenen Datei im Verzeichnis <code>application/views/pages/</code> überprüft. Legen Sie daher dort zwei Dateien an <code>home.php</code> und z.B. <code>about.php</code> und schreiben sie jeweils einen kleinen Text in die Dateien.</p>
+
+<p>Für Dateien, die nicht gefunden werden können wir mit <code>show_404()</code> eine Fehlermeldung erzeugt. Ist die angefragte Datei vorhanden, wird die Template-Variable <code>$titel</code> mit dem Namen belegt.
+Anschließend werden der Header, die Seite und der Footer unter Angabe der Template-Variablen gelanden.</p>
+
+<p>Überprüfen Sie, ob bis hier alles funktioniert: <a href="http://localhost/HandsOn/pages/view/">http://localhost/HandsOn/pages/view/</a> und <a href="http://localhost/HandsOn/pages/view/about">http://localhost/HandsOn/pages/view/about</a>.</p>
+
+<h1 id="routing">Routing</h1>
+
+<p>Um ein etwas schöneres Routing zu ermöglichen kann auch der Controller- und Action-Name versteckt werden, indem der Controller als Default-Controller konfiguriert wird.
+Öffnen sie dazu die Datei <code>application/config/routes.php</code> und passen sie die folgenden Zeilen an:</p>
+
+<pre><code>$route['default_controller'] = 'pages/view';
+$route['(:any)'] = 'pages/view/$1';
+</code></pre>
+
+<p>Ab jetzt sind die Seiten direkt erreichbar: <a href="http://localhost/HandsOn/">http://localhost/HandsOn/</a> und <a href="http://localhost/HandsOn/about">http://localhost/HandsOn/about</a>.</p>
+
+<p>Weitere Informationen zum routing finden Sie in der <a href="https://ellislab.com/codeigniter/user-guide/general/routing.html">CodeIgniter Dokumentation</a>.</p>
+
+<h1 id="weiter">Weiter</h1>
+
+<p>Legen Sie weitere Seiten in <code>application/views/pages/</code> an und experimentieren Sie mit dem <code>$data[]</code>-Array.</p>
+
+<hr />
+
+<p>Quelle: <a href="https://ellislab.com/codeigniter/user-guide/tutorial/static_pages.html">https://ellislab.com/codeigniter/user-guide/tutorial/static_pages.html</a></p>
+
+                </div>
+            </div>
+        </div>
+        <script src="js/highlight.js"></script>
+        <script src="js/ui.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#menu_item_handson_1").addClass("menu-item-divided pure-menu-selected");
+            });
+        </script>
+    </body>
+</html>
