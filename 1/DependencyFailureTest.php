@@ -7,8 +7,8 @@ class DependencyFailureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     *      * @depends testOne
-     *           */
+     * @depends testOne
+     */
     public function testTwo()
     {
     }

@@ -11,7 +11,7 @@ class StackTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($stack));
 
         $this->assertEquals('foo', array_pop($stack));
-        $this->assertEquals(0, count($stack));
+        $this->assertCount(0, $stack);
     }
 
     public function testEmpty()
@@ -23,8 +23,8 @@ class StackTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     *      * @depends testEmpty
-     *           */
+     * @depends testEmpty
+     */
     public function testPush(array $stack)
     {
         array_push($stack, 'foo');
@@ -35,8 +35,8 @@ class StackTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     *      * @depends testPush
-     *           */
+     * @depends testPush
+     */
     public function testPop(array $stack)
     {
         $this->assertEquals('foo', array_pop($stack));
