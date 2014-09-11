@@ -112,7 +112,7 @@ spl_autoload_register('my_autoloader');
 spl_autoload_register( function ($class) {
     if (strpos($class, 'My_') === 0) {
         $split = strpos($class, '_');
-        $file = substr($class, $split);
+        $file = substr($class, $split + 1);
         include 'application/' . $file . '.php';
     }
 });
