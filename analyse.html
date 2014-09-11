@@ -45,6 +45,27 @@
                 </div>
                 <div class="content">
                     
+<h1 id="benchmarking">Benchmarking</h1>
+
+<pre><code>$ sudo apt-get install apache2-utils
+$ ab -c 10 -n 1000 http://localhost/HandsOn/
+</code></pre>
+
+<h1 id="profiling-mit-microtime">Profiling mit microtime</h1>
+
+<p>Alternativ kann die Laufzeit eines Programmes mit microtime gemessen werden:</p>
+
+<pre><code>&lt;?php
+ob_start();
+$start = microtime();
+phpinfo();
+$end = microtime();
+ob_end_clean();
+echo "phpinfo() took " . ($end-$start) . " seconds to run.\n";
+</code></pre>
+
+<h1 id="profiling-mit-xdebug">Profiling mit xdebug</h1>
+
 <p>Folgende Zeilen müssen zur <code>/etc/php/fpm/conf.c/20-xdebug.ini</code> hinzugefügt werden:</p>
 
 <pre><code>xdebug.profiler_enable = 1
