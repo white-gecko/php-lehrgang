@@ -41,32 +41,46 @@
 
             <div id="main">
                 <div class="header">
-                    <h1>PHP Lehrgang</h1>
-                    <h2>TQ Group</h2>
+                    <h1>Codeing Conventions und Testen</h1>
                 </div>
                 <div class="content">
                     
-<h1 id="hallo">Hallo!</h1>
-<p>Diese Seitensammlung soll Ihnen während des PHP-Lehrgangs helfen einfacher auf die Code-Beispiele zuzugreifen um diese nachzuvollziehen.
-Die Installationsanleitungen setzen ein Debian GNU/Linux voraus (alternativ Ubuntu).</p>
+<h1 id="code-schniffer-installieren">Code Schniffer installieren</h1>
 
-<h2 id="vorstellung">Vorstellung</h2>
-<p>Meine Name ist <em>Natanael Arndt</em>, ich bin zur Zeit in der Forschungsgruppe <a href="http://aksw.org/">AKSW</a> am <a href="http://infai.org/">Institut für Angewandte Informatik (InfAI)</a> tätig.</p>
+<pre><code>// composer installieren
+$ curl -sS https://getcomposer.org/installer | php
 
-<ul>
-  <li>Meine WebID: <a href="http://aksw.org/NatanaelArndt">http://aksw.org/NatanaelArndt</a></li>
-  <li>… auf GitHub: <a href="http://github.com/white-gecko">http://github.com/white-gecko</a></li>
-  <li>… auf StackOverflow: <a href="http://stackoverflow.com/users/414075/white-gecko">http://stackoverflow.com/users/414075/white-gecko</a></li>
-</ul>
+// php code sniffer isntallieren
+$ php composer.phar global require "squizlabs/php_codesniffer=*"
+
+// composer bin zum $PATH hinzufügen
+PATH="$PATH:$HOME/.composer/vendor/bin/"
+// in ~/.profile eintragen und neue terminal sitzung starten
+
+// Coding Standards auschecken
+$ git clone -b cs https://github.com/white-gecko/php-lehrgang.git
+
+// Code Sniffer ausführen
+$ phpcs --standard=CodeSniffer/Standards/OntoWiki/ --extensions=php -p application/controllers/
+</code></pre>
+
+<h1 id="php-unit-installieren">PHP Unit installieren</h1>
+
+<pre><code>$ php composer.phar global require "phpunit/phpunit=*"
+
+// Tests auschecken
+$ git clone -b test https://github.com/white-gecko/php-lehrgang.git
+</code></pre>
 
                 </div>
             </div>
         </div>
-        <script src="js/jquery.js"></script>
+        <script src="js/highlight.js"></script>
         <script src="js/ui.js"></script>
+        <script src="js/jquery.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
-                $("#menu_item_home").addClass("menu-item-divided pure-menu-selected");
+                $("#menu_item_testen").addClass("menu-item-divided pure-menu-selected");
             });
         </script>
     </body>
