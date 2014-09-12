@@ -92,6 +92,11 @@ class Greeting
 $ zephir build
 </code></pre>
 
+<p>Das erstellte Modul laden indem folgende Zeile in <code>/etc/php5/{cli/fpm}/conf.d/utils.ini</code> eingefügt wird:</p>
+
+<pre><code>extension=utils.so
+</code></pre>
+
 <p>Überprüfen, ob die Erweiterung installiert wurde</p>
 
 <pre><code>$ php -m | grep utils
