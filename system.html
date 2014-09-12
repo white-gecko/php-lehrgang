@@ -42,71 +42,44 @@
 
             <div id="main">
                 <div class="header">
-                    <h1>PHP Framework – Hands On</h1>
-                    <h2>CodeIgniter</h2>
+                    <h1>Interaktion mit Systemprogrammen</h1>
                 </div>
                 <div class="content">
                     
-<h1 id="codeigniter-herunterladen-und-einrichten">CodeIgniter herunterladen und einrichten</h1>
+<h1 id="installation-der-zephir-abhngigkeiten">Installation der Zephir Abhängigkeiten</h1>
 
-<p><a href="https://github.com/EllisLab/CodeIgniter/tarball/develop">Aktuelle develop branch</a></p>
-
-<p>alternativ:</p>
-
-<pre><code>$ git clone https://github.com/EllisLab/CodeIgniter
+<pre><code>$ sudo apt-get update
+$ sudo apt-get install git gcc make re2c php5 php5-json php5-dev libpcre3-dev libjson-c-dev
 </code></pre>
 
-<p>Code in <code>/home/php-lehrgang/public_html/HandsOn</code> ablegen.</p>
+<h1 id="zephir-clonen-und-installieren">Zephir clonen und installieren</h1>
 
-<h1 id="nginx-einrichten">NGINX einrichten</h1>
-
-<pre><code>$ sudo gedit /etc/nginx/sites-available/default
+<pre><code>$ git clone https://github.com/phalcon/zephir
+$ cd zephir
+$ ./install -c
+$ zephir help
 </code></pre>
 
-<p>Folgende Zeilen einfügen:</p>
+<h1 id="erstes-beispiel">Erstes Beispiel</h1>
 
-<pre><code>server {
-	listen [::]:80 default_server ipv6only=off;
+<pre><code>$ zephir init utils
+</code></pre>
 
-	root /home/php-lehrgang/public_html/;
+<p>Unter <code>utils/utils/greetings.zep</code> anlegen:</p>
 
-	index index.html index.htm index.php;
+<pre><code>namespace Utils;
 
-	server_name localhost;
+class Greeting
+{
 
-	location /HandsOn {
-		rewrite ^/HandsOn/(.*)$ /HandsOn/index.php last;
-	}
+    public static function say()
+    {
+        echo "hello world!";
+    }
 
-	# pass the PHP scripts to FastCGI server	
-	location ~ \.php$ {
-		fastcgi_split_path_info ^(.+\.php)(/.+)$;
-		# With php5-fpm:
-		fastcgi_pass unix:/var/run/php5-fpm.sock;
-		#fastcgi_pass unix:/var/run/hhvm/hhvm.sock;
-		fastcgi_index index.php;
-		include fastcgi_params;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		fastcgi_param PATH_INFO $fastcgi_script_name;
-	}
 }
 </code></pre>
 
-<p>Server neustarten</p>
-
-<pre><code>$ sudo service nginx restart
-</code></pre>
-
-<h1 id="seite-ausprobieren">Seite ausprobieren</h1>
-
-<p><a href="http://localhost/HandsOn/">http://localhost/HandsOn/</a> (Es sollte ein 404 Fehler kommen)</p>
-
-<h1 id="codeigniter-einrichten">CodeIgniter einrichten</h1>
-
-<pre><code>…
-$config['uri_protocol'] = 'REQUEST_URI';
-…
-</code></pre>
 
                 </div>
             </div>
@@ -116,7 +89,7 @@ $config['uri_protocol'] = 'REQUEST_URI';
         <script src="js/jquery.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
-                $("#menu_item_handson").addClass("menu-item-divided pure-menu-selected");
+                $("#menu_item_system").addClass("menu-item-divided pure-menu-selected");
             });
         </script>
     </body>
