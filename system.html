@@ -92,6 +92,8 @@ class Greeting
 $ zephir build
 </code></pre>
 
+<p>Bei der Erstellung des Moduls legt zephir die Shared-Object Datei in den Ordner, der unter <code>php-config --extension-dir</code> angegeben ist.</p>
+
 <p>Das erstellte Modul laden indem folgende Zeile in <code>/etc/php5/{cli/fpm}/conf.d/utils.ini</code> eingefügt wird:</p>
 
 <pre><code>extension=utils.so
@@ -161,11 +163,12 @@ extern int    my_mod(int n, int m);
 
 <pre><code>$ gcc `php-config --includes` -fpic -c example_wrap.c example.c
 $ gcc -shared example_wrap.o example.o -o example.so
+$ sudo cp example.so `php-config --extension-dir`
 </code></pre>
 
 <p>Das erstellte Modul laden indem folgende Zeile in <code>/etc/php5/{cli/fpm}/conf.d/example.ini</code> eingefügt wird:</p>
 
-<pre><code>extension=/home/php/&lt;pfad&gt;/example.so
+<pre><code>extension=example.so
 </code></pre>
 
 <p>PHP unter Umständen neustarten</p>
