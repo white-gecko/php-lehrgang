@@ -46,13 +46,17 @@
                 </div>
                 <div class="content">
                     
-<h1 id="installation-der-zephir-abhngigkeiten">Installation der Zephir Abhängigkeiten</h1>
+<h1 id="zephir">Zephir</h1>
+
+<p><a href="http://zephir-lang.com/tutorial.html">http://zephir-lang.com/tutorial.html</a></p>
+
+<h2 id="installation-der-zephir-abhngigkeiten">Installation der Zephir Abhängigkeiten</h2>
 
 <pre><code>$ sudo apt-get update
 $ sudo apt-get install git gcc make re2c php5 php5-json php5-dev libpcre3-dev libjson-c-dev
 </code></pre>
 
-<h1 id="zephir-clonen-und-installieren">Zephir clonen und installieren</h1>
+<h2 id="zephir-clonen-und-installieren">Zephir clonen und installieren</h2>
 
 <pre><code>$ git clone https://github.com/phalcon/zephir
 $ cd zephir
@@ -60,7 +64,7 @@ $ ./install -c
 $ zephir help
 </code></pre>
 
-<h1 id="erstes-beispiel">Erstes Beispiel</h1>
+<h2 id="erstes-beispiel">Erstes Beispiel</h2>
 
 <pre><code>$ zephir init utils
 </code></pre>
@@ -78,6 +82,89 @@ class Greeting
     }
 
 }
+</code></pre>
+
+<p>Compilieren und Installieren der Erweiterung mit</p>
+
+<pre><code>$ cd utils
+$ zephir build
+</code></pre>
+
+<p>Überprüfen, ob die Erweiterung installiert wurde</p>
+
+<pre><code>$ php -m | grep utils
+</code></pre>
+
+<p>PHP unter Umständen neustarten</p>
+
+<p>Eine Beispiel PHP-Anwendung erstellen:</p>
+
+<pre><code>&lt;?php
+
+echo Utils\Greeting::say(), "\n";
+</code></pre>
+
+<h1 id="swig-30">SWIG 3.0</h1>
+
+<p>Eine Beispiel C-Anwendung <code>example.c</code> mit folgendem Inhalt anlegen:</p>
+
+<pre><code>/* File : example.c */
+
+double  My_variable  = 3.0;
+
+/* Compute factorial of n */
+int  fact(int n) {
+    if (n &lt;= 1) return 1;
+    else return n*fact(n-1);
+}
+
+/* Compute n mod m */
+int my_mod(int n, int m) {
+    return(n % m);
+}
+</code></pre>
+
+<p>Eine Interface Datei dazu anlegn:</p>
+
+<pre><code>/* File : example.i */
+%module example
+%{
+/* Put headers and other declarations here */
+extern double My_variable;
+extern int    fact(int);
+extern int    my_mod(int n, int m);
+%}
+
+extern double My_variable;
+extern int    fact(int);
+extern int    my_mod(int n, int m);
+</code></pre>
+
+<p>Swig ausführen, zur Erstellung der nötigen Adapter/Wrapper:</p>
+
+<pre><code>$ swig3.0 -php example.i
+</code></pre>
+
+<p>Die Wrapper übersetzen und linken:</p>
+
+<pre><code>$ gcc `php-config --includes` -fpic -c example_wrap.c example.c
+$ gcc -shared example_wrap.o example.o -o example.so
+</code></pre>
+
+<p>Das erstellte Modul laden indem folgende Zeile in <code>/etc/php5/{cli/fpm}/conf.d/example.ini</code> eingefügt wird:</p>
+
+<pre><code>extension=/home/php/&lt;pfad&gt;/example.so
+</code></pre>
+
+<p>PHP unter Umständen neustarten</p>
+
+<p>Eine Beispiel PHP-Anwendung schreiben:</p>
+
+<pre><code>&lt;?php
+
+echo $My_variable . PHP_EOL;
+echo fact(4) . PHP_EOL;
+echo my_mod(27, 5) . PHP_EOL;
 </code></pre>
 
 
