@@ -92,6 +92,8 @@ class Greeting
 $ zephir build
 </code></pre>
 
+<h2 id="die-erstellte-erweiterung-in-php-einbinden">Die erstellte Erweiterung in PHP einbinden</h2>
+
 <p>Bei der Erstellung des Moduls legt zephir die Shared-Object Datei in den Ordner, der unter <code>php-config --extension-dir</code> angegeben ist.</p>
 
 <p>Das erstellte Modul laden indem folgende Zeile in <code>/etc/php5/{cli/fpm}/conf.d/utils.ini</code> eingefügt wird:</p>
@@ -113,7 +115,7 @@ $ zephir build
 echo Utils\Greeting::say(), "\n";
 </code></pre>
 
-<h1 id="swig-30">SWIG 3.0</h1>
+<h1 id="swig">SWIG</h1>
 
 <ul>
   <li><a href="http://www.swig.org/Doc3.0/Introduction.html">http://www.swig.org/Doc3.0/Introduction.html</a></li>
