@@ -51,6 +51,54 @@
 $ ab -c 10 -n 1000 http://localhost/HandsOn/
 </code></pre>
 
+<h2 id="hhvm-installieren">HHVM installieren</h2>
+
+<pre><code>wget -O - http://dl.hhvm.com/conf/hhvm.gpg.key | sudo apt-key add -
+echo deb http://dl.hhvm.com/ubuntu trusty main | sudo tee /etc/apt/sources.list.d/hhvm.list
+sudo apt-get update
+sudo apt-get install hhvm
+</code></pre>
+
+<p>Quelle: <a href="https://github.com/facebook/hhvm/wiki/Prebuilt%20Packages%20for%20HHVM">https://github.com/facebook/hhvm/wiki/Prebuilt%20Packages%20for%20HHVM</a></p>
+
+<p>HHVM ausprobieren</p>
+
+<pre><code>echo '&lt;?php phpinfo();' &gt; phpinfo.php
+hhvm phpinfo.php
+</code></pre>
+
+<p>HHVM Server konfigurieren in <code>/etc/hhvm/server.ini</code></p>
+
+<pre><code>;hhvm.server.port = 9000
+hhvm.server.file_socket = /var/run/hhvm/hhvm.sock
+hhvm.server.type = fastcgi
+hhvm.server.default_document = index.php
+hhvm.log.use_log_file = true
+hhvm.log.file = /var/log/hhvm/error.log
+hhvm.repo.central.path = /var/run/hhvm/hhvm.hhbc
+</code></pre>
+
+<p>HHVM neustarten</p>
+
+<pre><code>sudo service hhvm status
+sudo service hhvm start
+sudo service hhvm status
+</code></pre>
+
+<p>NGINX konfigurieren</p>
+
+<pre><code>; /etc/nginx/sites-available/default
+#fastcgi_pass unix:/var/run/php5-fpm.sock;
+fastcgi_pass unix:/var/run/hhvm/hhvm.sock;
+</code></pre>
+
+<p>NGINX neustarten</p>
+
+<pre><code>sudo service nginx restart
+</code></pre>
+
+<h2 id="benchmarking-wiederholen">Benchmarking wiederholen</h2>
+
 <h1 id="profiling-mit-microtime">Profiling mit microtime</h1>
 
 <p>Alternativ kann die Laufzeit eines Programmes mit microtime gemessen werden:</p>
@@ -71,6 +119,13 @@ echo "phpinfo() took " . ($end-$start) . " seconds to run.\n";
 <pre><code>xdebug.profiler_enable = 1
 xdebug.profiler_output_dir = /tmp/
 </code></pre>
+
+<p>PHP Konfiguration neu laden</p>
+
+<pre><code>sudo service php5-fpm restart
+</code></pre>
+
+<p>Wichtig, gegebennenfalls NGINX Konfiguration anpassen (von HHVM wieder auf PHP5-fpm umstallen) und neustarten</p>
 
 <p>Außerdem muss ein Cachegrinder installiert werden</p>
 

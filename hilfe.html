@@ -118,6 +118,36 @@ spl_autoload_register( function ($class) {
 });
 </code></pre>
 
+<h1 id="magic-get--und-set-methoden">Magic Get- und Set-Methoden</h1>
+
+<pre><code>&lt;?php
+
+class Klasse {
+    private $_array = [];
+    public function __get($key) {
+        echo $key . PHP_EOL;
+        if ($key == 'bla') {
+            return 'blub';
+        }
+        return $this-&gt;_array[$key];
+    }
+
+    public function __set($key, $value) {
+        $this-&gt;_array[$key] = strrev($value);
+    }
+}
+
+$obj = new Klasse();
+
+$obj-&gt;eins = 'eins';
+$obj-&gt;bla = 'bla';
+$obj-&gt;zwei = 'zwei';
+
+echo $obj-&gt;eins . PHP_EOL;
+echo $obj-&gt;bla . PHP_EOL;
+echo $obj-&gt;zwei . PHP_EOL;
+</code></pre>
+
                 </div>
             </div>
         </div>
