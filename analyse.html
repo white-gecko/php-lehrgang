@@ -106,16 +106,16 @@ fastcgi_pass unix:/var/run/hhvm/hhvm.sock;
 
 <pre><code>&lt;?php
 ob_start();
-$start = microtime();
+$start = microtime(true);
 phpinfo();
-$end = microtime();
+$end = microtime(true);
 ob_end_clean();
 echo "phpinfo() took " . ($end-$start) . " seconds to run.\n";
 </code></pre>
 
 <h1 id="profiling-mit-xdebug">Profiling mit xdebug</h1>
 
-<p>Folgende Zeilen müssen zur <code>/etc/php/fpm/conf.c/20-xdebug.ini</code> hinzugefügt werden:</p>
+<p>Folgende Zeilen müssen zur <code>/etc/php5/fpm/conf.c/20-xdebug.ini</code> hinzugefügt werden:</p>
 
 <pre><code>xdebug.profiler_enable = 1
 xdebug.profiler_output_dir = /tmp/
