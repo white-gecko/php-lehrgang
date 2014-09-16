@@ -51,12 +51,13 @@
 <pre><code>// composer installieren
 $ curl -sS https://getcomposer.org/installer | php
 
-// php code sniffer isntallieren
+// php code sniffer installieren
 $ php composer.phar global require "squizlabs/php_codesniffer=*"
 
 // composer bin zum $PATH hinzufügen
 PATH="$PATH:$HOME/.composer/vendor/bin/"
-// in ~/.profile eintragen und neue terminal sitzung starten
+// in ~/.profile oder ~/.bashrc eintragen und eine neue Terminal Sitzung starten
+// „~“ steht dabei für das Home-Verzeichnis und welche Datei verwendet werden muss ist von System zu System unterschiedlich
 
 // Coding Standards auschecken
 $ git clone -b cs https://github.com/white-gecko/php-lehrgang.git CodeSniffer
